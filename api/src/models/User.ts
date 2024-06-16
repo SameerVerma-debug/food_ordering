@@ -14,7 +14,7 @@ const userSchema = new Schema({
   name:{
     type:String
   },
-  addressLine1:{
+  address:{
     type:String,
     trim:true
   },

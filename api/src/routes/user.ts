@@ -1,9 +1,10 @@
 import express from "express";
-import User from "../models/User";
 import createUser from "../controllers/createUser";
+import updateUser from "../controllers/updateUser";
 
 const userRouter = express.Router();
 
 userRouter.post("/", createUser);
+userRouter.patch("/", updateUser)
 
 export default userRouter;

@@ -7,25 +7,35 @@ interface CreateUserRequest {
   email: String;
 }
 
+interface UpdateUserProfile {
+  email: String;
+  name: String;
+  address?: String;
+  city?: String;
+  country?: String;
+}
+
 export function useCreateMyUser() {
-  const {getAccessTokenSilently} = useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
   const createMyUserRequest = async (user: CreateUserRequest) => {
     try {
       const accessToken = await getAccessTokenSilently({
         authorizationParams: {
-          audience: `${import.meta.env.VITE_API_DEFAULT_URL}/api/my/user`,
+          audience: `${import.meta.env.VITE_AUTH0_AUDIENCE}`,
         },
       });
-      console.log(accessToken);
-      const res = await axios.post("/api/my/user", {
-        auth0Id: user?.auth0Id,
-        email: user?.email,
-      },{
-        headers:{
-          Authorization:`Bearer ${accessToken}`
+      await axios.post(
+        "/api/my/user",
+        {
+          auth0Id: user?.auth0Id,
+          email: user?.email,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
-      }
-    );
+      );
     } catch (err: any) {
       throw new Error(err);
     }
@@ -41,4 +51,49 @@ export function useCreateMyUser() {
   } = useMutation(createMyUserRequest);
 
   return { createUser, isLoading, isError, isSuccess, isIdle, isPaused };
+}
+
+export function useUpdateUser() {
+  const { user,getAccessTokenSilently } = useAuth0();
+  const updateUserRequest = async (userFormDetails: UpdateUserProfile) => {
+    try {
+      const accessToken = await getAccessTokenSilently({
+        authorizationParams: {
+          audience: `${import.meta.env.VITE_AUTH0_AUDIENCE}`,
+        },
+      });
+
+      await axios.patch(
+        "/api/my/user",
+        {
+          auth0Id:user?.sub,
+          email: userFormDetails?.email,
+          name: userFormDetails?.name,
+          address: userFormDetails?.address,
+          city: userFormDetails?.city,
+          country: userFormDetails?.country,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+    } catch (err: any) {
+      throw new Error(err);
+    }
+  };
+  const {
+    mutateAsync: updateUser,
+    isError,
+    isSuccess,
+    isLoading,
+  } = useMutation(updateUserRequest);
+
+  return {
+    updateUser,
+    isError,
+    isSuccess,
+    isLoading,
+  };
 }
