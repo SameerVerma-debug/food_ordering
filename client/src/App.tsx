@@ -7,22 +7,26 @@ import { UserOrders } from "./pages/UserOrders";
 import { UserRestraunts } from "./pages/UserRestraunts";
 import { UserProfile } from "./pages/UserProfile";
 import axios from "axios";
+import { AuthCallback } from "./components/AuthCallback";
+import { Auth0ProviderWithNavigate } from "./auth/auth0ProviderWithNavigate";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_DEFAULT_URL;
-//axios.defaults.withCredentials = true;
 
 function App() {
   return (
     <div className="min-h-full flex flex-col">
       <BrowserRouter>
-        <Header />
+        <Auth0ProviderWithNavigate>
+          <Header />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/user-orders" element={<UserOrders/>}/>
-            <Route path="/user-restraunts" element={<UserRestraunts/>}/>
-            <Route path="/user-profile" element={<UserProfile/>}/>
+            <Route path="/user-orders" element={<UserOrders />} />
+            <Route path="/user-restraunts" element={<UserRestraunts />} />
+            <Route path="/user-profile" element={<UserProfile />} />
+            <Route path="/auth-callback" element={<AuthCallback />} />
           </Routes>
-        <Footer />
+          <Footer />
+        </Auth0ProviderWithNavigate>
       </BrowserRouter>
     </div>
   );
