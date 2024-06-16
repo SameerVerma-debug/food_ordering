@@ -6,8 +6,8 @@ import { FormError } from "@/components/FormError";
 import { useGetUser, useUpdateUser } from "@/api/MyUserApi";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { toast } from "react-hot-toast";
 import { LoadingButton } from "@/components/LoadingButton";
+import { useNavigate } from "react-router-dom";
 
 interface UserFormData {
   email: String;

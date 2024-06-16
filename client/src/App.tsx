@@ -9,6 +9,7 @@ import { AuthCallback } from "./components/AuthCallback";
 import { Auth0ProviderWithNavigate } from "./auth/auth0ProviderWithNavigate";
 import { Layout } from "./layouts/Layout";
 import { Toaster } from "react-hot-toast";
+import { ProtectedRoute } from "./auth/ProtectedRoute";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_DEFAULT_URL;
 
@@ -17,16 +18,18 @@ function App() {
     <div className="min-h-full flex flex-col">
       <BrowserRouter>
         <Auth0ProviderWithNavigate>
-          <Toaster/>
-            <Routes>
-              <Route path="/" element={<Layout />}>
-                <Route path="" element={<Home />} />
-                <Route path="user-orders" element={<UserOrders />} />
-                <Route path="user-restraunts" element={<UserRestraunts />} />
+          <Toaster />
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route path="" element={<Home />} />
+              <Route path="user-orders" element={<UserOrders />} />
+              <Route path="user-restraunts" element={<UserRestraunts />} />
+              <Route element={<ProtectedRoute />}>
                 <Route path="user-profile" element={<UserProfile />} />
-                <Route path="auth-callback" element={<AuthCallback />} />
               </Route>
-            </Routes>
+              <Route path="auth-callback" element={<AuthCallback />} />
+            </Route>
+          </Routes>
         </Auth0ProviderWithNavigate>
       </BrowserRouter>
     </div>
