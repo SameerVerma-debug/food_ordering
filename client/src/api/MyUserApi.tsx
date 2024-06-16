@@ -1,5 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { useMutation } from "react-query";
 
 interface CreateUserRequest {
@@ -56,7 +57,7 @@ export function useCreateMyUser() {
 }
 
 export function useUpdateUser() {
-  const { user, getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
   const updateUserRequest = async (userFormDetails: UpdateUserProfile) => {
     try {
       const accessToken = await getAccessTokenSilently({
@@ -68,7 +69,6 @@ export function useUpdateUser() {
       await axios.patch(
         "/api/my/user",
         {
-          auth0Id: user?.sub,
           email: userFormDetails?.email,
           name: userFormDetails?.name,
           address: userFormDetails?.address,
@@ -92,6 +92,14 @@ export function useUpdateUser() {
     isLoading,
   } = useMutation(updateUserRequest);
 
+  if(isSuccess){
+    toast.success("Profile Updated");
+  }
+
+  if(isError){
+    toast.error("Profile cannot be updated");
+  }
+
   return {
     updateUser,
     isError,
@@ -101,14 +109,14 @@ export function useUpdateUser() {
 }
 
 export function useGetUser() {
-  const { user,getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
   const getUserRequest = async () => {
     const accessToken = await getAccessTokenSilently({
       authorizationParams: {
         audience: `${import.meta.env.VITE_AUTH0_AUDIENCE}`,
       },
     });
-    const res = await axios.get(`/api/my/user/${user?.sub}`, {
+    const res = await axios.get(`/api/my/user`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

@@ -2,13 +2,13 @@ import { Request, Response } from "express";
 import User from "../models/User";
 
 const getUser = async(req:Request,res:Response) => {
-  const {auth0Id} = req.params;
+  const userId = req.userId;
 
-  if(!auth0Id){
+  if(!userId){
     return res.sendStatus(403);
   }
 
-  const user = await User.findOne({auth0Id}).select({auth0id:0,_id:0});
+  const user = await User.findById(userId);
   if(!user){
     return res.sendStatus(404);
   }

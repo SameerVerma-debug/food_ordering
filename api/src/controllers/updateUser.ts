@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 
-const updateUser = async(req:Request,res:Response) => {
-  const {auth0Id,email,name,address,city,country} = req.body;
-  if(!auth0Id || !email || !name){
+const updateUser = async (req: Request, res: Response) => {
+  const { name, address, city, country } = req.body;
+  const userId = req.userId;
+  if (!userId || !address || !city || !country || !name) {
     return res.sendStatus(400);
   }
 
-  const filter = {auth0Id};
-  const update = {email,name,address,city,country};
+  const update = { name, address, city, country };
 
-  await User.findOneAndUpdate(filter,update);
-  return res.status(200).json({message:"Profile Successfully Updated"});
-}
+  await User.findByIdAndUpdate(userId, update);
+  return res.status(200).json({ message: "Profile Successfully Updated" });
+};
 
-export default updateUser
+export default updateUser;

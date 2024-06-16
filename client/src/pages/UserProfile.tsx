@@ -3,33 +3,35 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormError } from "@/components/FormError";
-import { useGetUser, useUpdateUser } from "@/api/MyUserCreate";
+import { useGetUser, useUpdateUser } from "@/api/MyUserApi";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { toast } from "react-hot-toast";
+import { LoadingButton } from "@/components/LoadingButton";
 
 interface UserFormData {
   email: String;
   name: String;
-  address?: String;
-  city?: String;
-  country?: String;
+  address: String;
+  city: String;
+  country: String;
 }
 
 export function UserProfile() {
   const { user } = useAuth0();
-  const { updateUser } = useUpdateUser();
+  const { updateUser, isLoading } = useUpdateUser();
   const { getUser } = useGetUser();
   const [formInputs, setFormInputs] = useState<UserFormData | null>(null);
-  
+
   const schema = yup.object().shape({
     email: yup
       .string()
       .email("Email should be like: sameer@gmail.com")
       .required("Email is required"),
     name: yup.string().required("Name is Required"),
-    address: yup.string(),
-    city: yup.string(),
-    country: yup.string(),
+    address: yup.string().required("Address is Required"),
+    city: yup.string().required("City is Required"),
+    country: yup.string().required("Country is required"),
   });
 
   const {
@@ -45,7 +47,7 @@ export function UserProfile() {
   useEffect(() => {
     let ignore = false;
     const fetchUserDetails = async () => {
-      if (user?.sub) {
+      if (user) {
         const data = await getUser();
         setFormInputs(data);
         reset(data);
@@ -60,7 +62,7 @@ export function UserProfile() {
     };
   }, [reset, user]);
 
-  const onSubmit = (data: UserFormData) => {
+  const onSubmit = async (data: UserFormData) => {
     updateUser(data);
   };
 
@@ -75,13 +77,11 @@ export function UserProfile() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <p>
-              Email<span className="text-red-500"> *</span>
-            </p>
+            <p>Email</p>
             <input
-              aria-describedby="required-description"
               type="email"
               className="border rounded-lg p-2"
+              disabled
               {...register("email")}
             />
             <FormError message={errors.email?.message} />
@@ -99,35 +99,48 @@ export function UserProfile() {
             <FormError message={errors.name?.message} />
           </div>
           <div className="flex flex-col gap-2">
-            <p>Address</p>
+            <p>
+              Address<span className="text-red-500"> *</span>
+            </p>
             <input
               type="text"
+              aria-describedby="required-description"
               className="border rounded-lg p-2"
               {...register("address")}
             />
             <FormError message={errors.address?.message} />
           </div>
           <div className="flex flex-col gap-2">
-            <p>City</p>
+            <p>
+              City<span className="text-red-500"> *</span>
+            </p>
             <input
               type="text"
+              aria-describedby="required-description"
               className="border rounded-lg p-2"
               {...register("city")}
             />
             <FormError message={errors.city?.message} />
           </div>
           <div className="flex flex-col gap-2">
-            <p>Country</p>
+            <p>
+              Country<span className="text-red-500"> *</span>
+            </p>
             <input
               type="text"
+              aria-describedby="required-description"
               className="border rounded-lg p-2"
               {...register("country")}
             />
             <FormError message={errors.country?.message} />
           </div>
-          <Button className="hover:bg-orange-500" size="lg">
-            Save
-          </Button>
+          {isLoading ? (
+            <LoadingButton/>
+          ) : (
+            <Button className="hover:bg-orange-500" size="lg">
+              Save
+            </Button>
+          )}
         </div>
       </form>
     </div>

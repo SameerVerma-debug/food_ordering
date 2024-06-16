@@ -3,7 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import connectDB from "./utils/connectDB";
 import userRouter from "./routes/user";
-import checkJwt from "./middlewares/checkJwt";
+import checkJwt, { jwtParse } from "./middlewares/checkJwt";
 
 const app = express();
 app.use(cors());
@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(checkJwt);
+app.use(jwtParse);
 app.use("/api/my/user", userRouter);
 
 mongoose.connection.once("open", () => {

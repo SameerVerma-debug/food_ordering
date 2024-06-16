@@ -7,6 +7,6 @@ const userRouter = express.Router();
 
 userRouter.post("/", createUser);
 userRouter.patch("/", updateUser)
-userRouter.get("/:auth0Id", getUser);
+userRouter.get("/", getUser);
 
 export default userRouter;
