@@ -24,7 +24,7 @@ export function useCreateMyUser() {
           audience: `${import.meta.env.VITE_AUTH0_AUDIENCE}`,
         },
       });
-      await axios.post(
+      const res = await axios.post(
         "/api/my/user",
         {
           auth0Id: user?.auth0Id,
@@ -36,6 +36,8 @@ export function useCreateMyUser() {
           },
         }
       );
+
+      return res.data;
     } catch (err: any) {
       throw new Error(err);
     }
@@ -54,7 +56,7 @@ export function useCreateMyUser() {
 }
 
 export function useUpdateUser() {
-  const { user,getAccessTokenSilently } = useAuth0();
+  const { user, getAccessTokenSilently } = useAuth0();
   const updateUserRequest = async (userFormDetails: UpdateUserProfile) => {
     try {
       const accessToken = await getAccessTokenSilently({
@@ -66,7 +68,7 @@ export function useUpdateUser() {
       await axios.patch(
         "/api/my/user",
         {
-          auth0Id:user?.sub,
+          auth0Id: user?.sub,
           email: userFormDetails?.email,
           name: userFormDetails?.name,
           address: userFormDetails?.address,
@@ -96,4 +98,37 @@ export function useUpdateUser() {
     isSuccess,
     isLoading,
   };
+}
+
+export function useGetUser() {
+  const { user,getAccessTokenSilently } = useAuth0();
+  const getUserRequest = async () => {
+    const accessToken = await getAccessTokenSilently({
+      authorizationParams: {
+        audience: `${import.meta.env.VITE_AUTH0_AUDIENCE}`,
+      },
+    });
+    const res = await axios.get(`/api/my/user/${user?.sub}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const userData = res.data;
+    return {
+      email: userData?.email,
+      name: userData?.name,
+      address: userData?.address,
+      city: userData?.city,
+      country: userData?.country,
+    };
+  };
+
+  const {
+    mutateAsync: getUser,
+    isError,
+    isLoading,
+  } = useMutation(getUserRequest);
+
+  return { getUser, isError, isLoading };
 }

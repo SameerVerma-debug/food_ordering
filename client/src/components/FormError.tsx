@@ -1,5 +1,5 @@
 type Props = {
-  message:String | undefined
+  message:any
 };
 
 export function FormError({message}: Props) {
