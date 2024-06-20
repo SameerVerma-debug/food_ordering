@@ -6,14 +6,20 @@ import userRouter from "./routes/user";
 import checkJwt, { jwtParse } from "./middlewares/checkJwt";
 
 const app = express();
-app.use(cors());
 connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+
+app.get("/health",(req:Request,res:Response) => {
+  res.json({message:"Health Ok"});
+})
 
 app.use(checkJwt);
 app.use(jwtParse);
 app.use("/api/my/user", userRouter);
+
+
 
 mongoose.connection.once("open", () => {
   console.log("DB CONNECTED");
