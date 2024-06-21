@@ -55,7 +55,7 @@ const updateRestraunt = async (req: Request, res: Response) => {
   const {id,name,city,country,deliveryPrice,estimatedDeliveryTime,cuisines,menuItems,image} = req.body;
   const userId = req.userId;
   if(!id || !name || !city || !country || !deliveryPrice 
-    || !estimatedDeliveryTime || !cuisines || !menuItems || !image){
+    || !estimatedDeliveryTime || cuisines?.length <= 0 || menuItems?.length <= 0 || !image){
     return res.sendStatus(400);
   }
 
@@ -93,7 +93,7 @@ const addRestraunt = async (req: Request, res: Response) => {
   const {name,city,country,deliveryPrice,estimatedDeliveryTime,cuisines,menuItems,image} = req.body;
   const owner = req.userId;
   if(!owner || !name || !city || !country || !deliveryPrice 
-    || !estimatedDeliveryTime || !cuisines || !menuItems || !image){
+    || !estimatedDeliveryTime || cuisines?.length <= 0 || menuItems?.length <= 0 || !image){
     return res.sendStatus(400);
   }
 

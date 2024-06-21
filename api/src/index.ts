@@ -7,6 +7,8 @@ import restrauntRouter from "./routes/restraunt";
 import checkJwt, { jwtParse } from "./middlewares/checkJwt";
 import {v2 as cloudinary} from "cloudinary";
 import "dotenv/config";
+import uploadRouter from "./routes/upload";
+import bodyParser from "body-parser";
 
 const app = express();
 connectDB();
@@ -18,7 +20,8 @@ cloudinary.config({
 })
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended:true}));
+//app.use(express.static(''));
 app.use(cors());
 
 app.get("/health",(req:Request,res:Response) => {
@@ -26,6 +29,7 @@ app.get("/health",(req:Request,res:Response) => {
 })
 
 app.use("/api/my/restraunt", restrauntRouter);
+app.use("/api/my/upload",uploadRouter);
 
 app.use(checkJwt);
 app.use(jwtParse);
