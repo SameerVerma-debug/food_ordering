@@ -21,10 +21,13 @@ const restrauntSchema = new Schema({
   },
   deliveryPrice: {
     type: Number,
+    min:0,
     required: true,
   },
   estimatedDeliveryTime: {
     type: Number,
+    min:0,
+    required:true
   },
   cuisines: [
     {

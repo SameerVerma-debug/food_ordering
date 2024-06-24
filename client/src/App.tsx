@@ -2,7 +2,7 @@ import "./global.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import { UserOrders } from "./pages/UserOrders";
-import { UserRestraunts } from "./pages/UserRestraunts";
+import { UserRestraunts } from "./pages/user-restraunts/UserRestraunts";
 import { UserProfile } from "./pages/UserProfile";
 import axios from "axios";
 import { AuthCallback } from "./components/AuthCallback";
@@ -23,9 +23,9 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route path="" element={<Home />} />
               <Route path="user-orders" element={<UserOrders />} />
-              <Route path="user-restraunts" element={<UserRestraunts />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="user-profile" element={<UserProfile />} />
+                <Route path="user-restraunts" element={<UserRestraunts />} />
               </Route>
               <Route path="auth-callback" element={<AuthCallback />} />
             </Route>

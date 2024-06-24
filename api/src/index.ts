@@ -28,12 +28,12 @@ app.get("/health",(req:Request,res:Response) => {
   res.json({message:"Health Ok"});
 })
 
-app.use("/api/my/restraunt", restrauntRouter);
 app.use("/api/my/upload",uploadRouter);
 
 app.use(checkJwt);
 app.use(jwtParse);
 app.use("/api/my/user", userRouter);
+app.use("/api/my/restraunt", restrauntRouter);
 
 mongoose.connection.once("open", () => {
   console.log("DB CONNECTED");
