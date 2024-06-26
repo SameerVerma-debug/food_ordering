@@ -23,7 +23,7 @@ uploadRouter.post("/", upload.single("imageFile"), async (req, res) => {
 
     const uploadResponse = await cloudinary.v2.uploader.upload(dataURI);
     //console.log(uploadResponse);
-    res.send(uploadResponse.url);
+    res.send(uploadResponse?.public_id);
   } catch (err) {
     console.log(err);
     res.sendStatus(500);

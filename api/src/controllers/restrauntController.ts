@@ -10,7 +10,7 @@ const getUserRestraunts = async (req: Request, res: Response) => {
 
   try {
     const userRestraunts = await Restraunt.find({ owner: userId }).select(
-      "name _id"
+      "name _id image city country"
     );
 
     if (!userRestraunts || userRestraunts?.length == 0) {
@@ -81,7 +81,7 @@ const updateRestraunt = async (req: Request, res: Response) => {
     foundRestraunt.lastUpdated = new Date();
   
     await foundRestraunt.save();
-    return res.json({message:"Restraunt Updated"});
+    return res.json({message:"Restraunt Updated",restraunt:foundRestraunt});
   }
   catch(err){
     console.log(err);

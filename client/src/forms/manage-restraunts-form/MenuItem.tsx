@@ -1,46 +1,49 @@
+import { useUploadImage } from "@/api/MyUploadApi";
+import { AdvanceImage } from "@/components/AdvanceImage";
 import { FormError } from "@/components/FormError";
+import { Loading } from "@/components/Loading";
 import { Button } from "@/components/ui/button";
-import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 import { useState } from "react";
 import { IoCloudUploadOutline } from "react-icons/io5";
 
-export const MenuItem = ({ register, errors, field, index, remove }: any) => {
+export const MenuItem = ({
+  register,
+  errors,
+  field,
+  index,
+  remove,
+  setValue,
+  itemImage,
+}: any) => {
   const [image, setImage] = useState("");
-  const { getAccessTokenSilently } = useAuth0();
-  const accessToken = getAccessTokenSilently({
-    authorizationParams: {
-      audience: import.meta.env.VITE_AUTH0_AUDIENCE,
-    },
-  });
-  const handleImageUpload = async(e: Event) => {
+  const { uploadImage, isLoading } = useUploadImage();
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     const files = target.files as FileList;
-
-    const formData = new FormData();
-    console.log(files);
-    formData.append("imageFile", files[0]);
-    console.log(formData);
-
-    const res = await axios.post(
-      "/api/my/upload",
-      formData ,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
-    );
-    setImage(res.data);
+    const data = await uploadImage(files);
+    setImage(data);
+    setValue(`menuItems.${[index]}.itemImage`, data);
   };
+
   return (
     <div className="flex flex-col gap-4 w-full" key={field.id}>
       <div className="flex gap-4">
         <div className="flex flex-col gap-2 flex-1">
           <p>Item Image</p>
-          <img
-            className="object-cover rounded-xl"
-            src={image}
-            {...register(`menuItems.${index}.itemImage` as const) }
-            alt=""
-          />
-          <input type="text" defaultValue={image} hidden {...register(`menuItems.${index}.itemImage`)}/>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <>
+              <AdvanceImage photo={!image ? itemImage : image} />
+
+              {errors.menuItems?.[index]?.itemImage && (
+                <FormError
+                  message={errors?.menuItems?.[index]?.itemImage?.message}
+                />
+              )}
+            </>
+          )}
         </div>
         <div className="flex flex-1 items-center justify-center">
           <label>
@@ -86,13 +89,15 @@ export const MenuItem = ({ register, errors, field, index, remove }: any) => {
           )}
         </div>
 
-        <Button
-          type="button"
-          onClick={() => remove(index)}
-          className="bg-red-500 mt-auto w-fit content-center ml-auto mr-auto"
-        >
-          Remove
-        </Button>
+        {index >= 1 && (
+          <Button
+            type="button"
+            onClick={() => remove(index)}
+            className="bg-red-500 mt-auto w-fit content-center ml-auto mr-auto"
+          >
+            Remove
+          </Button>
+        )}
       </div>
     </div>
   );

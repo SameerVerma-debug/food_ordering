@@ -7,7 +7,7 @@ import { NavLinks } from "./NavLinks";
 export function Header() {
   const { isAuthenticated } = useAuth0();
   return (
-    <div className="border-b border-b-black py-6 ">
+    <div className="border-b border-b-gray-300 py-6 ">
       <div className="container mx-auto flex justify-between items-center">
         <Link
           className="text-3xl font-bold tracking-tight text-orange-500"

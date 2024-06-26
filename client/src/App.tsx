@@ -10,6 +10,8 @@ import { Auth0ProviderWithNavigate } from "./auth/auth0ProviderWithNavigate";
 import { Layout } from "./layouts/Layout";
 import { Toaster } from "react-hot-toast";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
+import { Restraunt } from "./pages/user-restraunts/Restraunt";
+import { AddRestraunt } from "./pages/user-restraunts/AddRestraunt";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_DEFAULT_URL;
 
@@ -26,6 +28,8 @@ function App() {
               <Route element={<ProtectedRoute />}>
                 <Route path="user-profile" element={<UserProfile />} />
                 <Route path="user-restraunts" element={<UserRestraunts />} />
+                <Route path="user-restraunts/:id" element={<Restraunt/>}/>
+                <Route path="user-restraunts/new" element={<AddRestraunt/>}/>
               </Route>
               <Route path="auth-callback" element={<AuthCallback />} />
             </Route>

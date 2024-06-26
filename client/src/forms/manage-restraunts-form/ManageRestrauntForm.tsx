@@ -1,15 +1,16 @@
 import * as yup from "yup";
 import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { FormError } from "@/components/FormError";
-import { devNull } from "os";
-import { IoCloudUploadOutline } from "react-icons/io5";
 import DetailsSection from "./DetailsSections";
 import { MenuItem } from "./MenuItem";
+import { RestrauntImage } from "./RestrauntImage";
+import { LoadingButton } from "@/components/LoadingButton";
+import { Cuisines } from "./Cuisines";
+import { useEffect } from "react";
 
 const schema = yup.object().shape({
+  id: yup.string(),
   name: yup.string().required("Name is Required"),
   city: yup.string().required("City is Required"),
   country: yup.string().required("Country is Required"),
@@ -25,53 +26,76 @@ const schema = yup.object().shape({
     .positive("Must be a positive value")
     .integer("Must be a integer")
     .required("Delivery Time is Required"),
-  // cuisines: yup
-  //   .array(yup.string())
-  //   .min(1, "Please Select atleast one cuisine")
-  //   .required("Cuisines are required"),
-  menuItems: yup.array(
-    yup.object({
-      itemName: yup.string().required("Enter name for item"),
-      itemPrice: yup
-        .number()
-        .typeError("Must be a number")
-        .positive("Must be positive")
-        .integer("Must be an integer")
-        .required("Enter price for item")
-        .min(1, "Price should be positive"),
-      itemImage: yup.string(),
-    })
-  ),
-  //image: yup.mixed().required("Image is required"),
+  cuisines: yup
+    .array(yup.string())
+    .min(1, "Please Select atleast one cuisine")
+    .required("Cuisines are required"),
+  menuItems: yup
+    .array(
+      yup.object({
+        itemName: yup.string().required("Enter name for item"),
+        itemPrice: yup
+          .number()
+          .typeError("Must be a number")
+          .positive("Must be positive")
+          .integer("Must be an integer")
+          .required("Enter price for item")
+          .min(1, "Price should be positive"),
+        itemImage: yup.string().required("Item Image is Required"),
+      })
+    )
+    .min(1, "Add1")
+    .required("Add ateast 1 menu item"),
+  image: yup.string().required("Image is required"),
 });
 
-type restrauntFormData = yup.InferType<typeof schema>;
+export type restrauntFormData = yup.InferType<typeof schema>;
 
-const ManageRestrauntForm = () => {
+interface Props {
+  formData: restrauntFormData | null | undefined;
+  onSave(data: restrauntFormData): void;
+  isLoading: Boolean;
+}
+
+const ManageRestrauntForm = ({ formData, onSave, isLoading }: Props) => {
   const {
     handleSubmit,
     formState: { errors },
     control,
     register,
+    setValue,
+    reset,
   } = useForm<restrauntFormData>({
     resolver: yupResolver(schema),
+    defaultValues: formData
+      ? formData
+      : {
+          cuisines: [],
+          menuItems: [{ itemImage: "", itemName: "", itemPrice: 1 }],
+        },
   });
+
+  useEffect(() => {
+    if (formData) {
+      reset(formData);
+    }
+  }, [formData, reset]);
 
   const { fields, append, remove } = useFieldArray({
     name: "menuItems",
     control,
   });
 
-  const handleRestrauntSave = (data: restrauntFormData) => {
-    console.log("hi");
-    console.log(data);
+  const handleRestrauntSave = async (data: restrauntFormData) => {
+    onSave(data);
   };
-
+  console.log(errors.menuItems?.message);
   return (
-    <div className="m-4 p-2">
+    <div className="m-4 p-2 h-full flex-1">
       <form onSubmit={handleSubmit(handleRestrauntSave)}>
         <div className="flex flex-col gap-8">
           <DetailsSection register={register} errors={errors} />
+          <Cuisines control={control} errors={errors} />
 
           <div className="flex flex-col gap-4">
             <div>
@@ -89,6 +113,10 @@ const ManageRestrauntForm = () => {
                     field={field}
                     index={index}
                     remove={remove}
+                    setValue={setValue}
+                    itemImage={
+                      formData ? formData?.menuItems[index]?.itemImage : ""
+                    }
                   />
                 );
               })}
@@ -103,10 +131,26 @@ const ManageRestrauntForm = () => {
               </Button>
             </div>
           </div>
+          <RestrauntImage
+            setValue={setValue}
+            errors={errors}
+            restrauntImage={formData ? formData?.image : ""}
+          />
 
-          <Button size="lg" className="hover:bg-orange-500">
-            Save
-          </Button>
+          {isLoading ? (
+            <LoadingButton />
+          ) : formData ? (
+            <>
+              <Button size="lg" className="hover:bg-orange-500">
+                Save
+              </Button>
+              <Button  type="button" variant="destructive">Delete</Button>
+            </>
+          ) : (
+            <Button size="lg" className="hover:bg-orange-500">
+              Save
+            </Button>
+          )}
         </div>
       </form>
     </div>
