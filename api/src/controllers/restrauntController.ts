@@ -52,15 +52,15 @@ const getRestraunt = async (req: Request, res: Response) => {
 };
 
 const updateRestraunt = async (req: Request, res: Response) => {
-  const {id,name,city,country,deliveryPrice,estimatedDeliveryTime,cuisines,menuItems,image} = req.body;
+  const {_id,name,city,country,deliveryPrice,estimatedDeliveryTime,cuisines,menuItems,image} = req.body;
   const userId = req.userId;
-  if(!id || !name || !city || !country || !deliveryPrice 
+  if(!_id || !name || !city || !country || !deliveryPrice 
     || !estimatedDeliveryTime || cuisines?.length <= 0 || menuItems?.length <= 0 || !image){
     return res.sendStatus(400);
   }
 
   try{
-    const foundRestraunt = await Restraunt.findById(id);
+    const foundRestraunt = await Restraunt.findById(_id);
 
     if(!foundRestraunt){
       return res.sendStatus(404);
@@ -120,13 +120,18 @@ const addRestraunt = async (req: Request, res: Response) => {
 };
 
 const deleteRestraunt = async (req: Request, res: Response) => {
-  const {id} = req.body;
+  const {id} = req.params;
+  const userId = req.userId;
 
   if(!id){
     return res.sendStatus(400);
   }
 
   try{
+    const restraunt = await Restraunt.findById(id);
+    if(restraunt?.owner.toString() != userId){
+      return res.sendStatus(403);
+    }
     const result = await Restraunt.findByIdAndDelete(id);
     res.json(result);
   }

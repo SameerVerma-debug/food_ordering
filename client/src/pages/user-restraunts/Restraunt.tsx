@@ -1,5 +1,4 @@
 import { useGetRestraunt, useUpdateRestraunt } from "@/api/MyRestrauntApi";
-import { Button } from "@/components/ui/button";
 import ManageRestrauntForm, {
   restrauntFormData,
 } from "@/forms/manage-restraunts-form/ManageRestrauntForm";
@@ -29,7 +28,7 @@ export function Restraunt() {
   }, [id]);
 
   const handleUpdateRestraunt = async (data: restrauntFormData) => {
-    data = { ...data, id };
+    data = { ...data };
     await updateRestraunt(data);
   };
 

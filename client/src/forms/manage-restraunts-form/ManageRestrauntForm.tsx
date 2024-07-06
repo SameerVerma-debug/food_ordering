@@ -8,9 +8,10 @@ import { RestrauntImage } from "./RestrauntImage";
 import { LoadingButton } from "@/components/LoadingButton";
 import { Cuisines } from "./Cuisines";
 import { useEffect } from "react";
+import { DeleteRestraunt } from "@/components/DeleteRestraunt";
 
 const schema = yup.object().shape({
-  id: yup.string(),
+  _id: yup.string(),
   name: yup.string().required("Name is Required"),
   city: yup.string().required("City is Required"),
   country: yup.string().required("Country is Required"),
@@ -55,9 +56,15 @@ interface Props {
   formData: restrauntFormData | null | undefined;
   onSave(data: restrauntFormData): void;
   isLoading: Boolean;
+  onDelete?(id: String | undefined): void;
 }
 
-const ManageRestrauntForm = ({ formData, onSave, isLoading }: Props) => {
+const ManageRestrauntForm = ({
+  formData,
+  onSave,
+  isLoading,
+  onDelete,
+}: Props) => {
   const {
     handleSubmit,
     formState: { errors },
@@ -89,7 +96,7 @@ const ManageRestrauntForm = ({ formData, onSave, isLoading }: Props) => {
   const handleRestrauntSave = async (data: restrauntFormData) => {
     onSave(data);
   };
-  console.log(errors.menuItems?.message);
+
   return (
     <div className="m-4 p-2 h-full flex-1">
       <form onSubmit={handleSubmit(handleRestrauntSave)}>
@@ -137,19 +144,27 @@ const ManageRestrauntForm = ({ formData, onSave, isLoading }: Props) => {
             restrauntImage={formData ? formData?.image : ""}
           />
 
-          {isLoading ? (
-            <LoadingButton />
-          ) : formData ? (
+          {formData ? (
             <>
-              <Button size="lg" className="hover:bg-orange-500">
-                Save
-              </Button>
-              <Button  type="button" variant="destructive">Delete</Button>
+              {isLoading ? (
+                <LoadingButton />
+              ) : (
+                <Button size="lg" className="hover:bg-orange-500">
+                  Save
+                </Button>
+              )}
+              <DeleteRestraunt id={formData._id as string} />
             </>
           ) : (
-            <Button size="lg" className="hover:bg-orange-500">
-              Save
-            </Button>
+            <>
+              {isLoading ? (
+                <LoadingButton />
+              ) : (
+                <Button size="lg" className="hover:bg-orange-500">
+                  Save
+                </Button>
+              )}
+            </>
           )}
         </div>
       </form>

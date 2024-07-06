@@ -5,7 +5,7 @@ import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 
 interface RestrauntData {
-  id?: string | null | undefined;
+  _id?: string | null | undefined;
   menuItems:
     | {
         itemName: string;
@@ -140,4 +140,38 @@ export function useUpdateRestraunt() {
     isSuccess,
   } = useMutation(handleUpdateRestraunt);
   return { updateRestraunt, isLoading, isError, isSuccess };
+}
+
+export function useDeleteRestraunt() {
+  const {getAccessTokenSilently} = useAuth0();
+  const navigate = useNavigate();
+  const handleDeleteRestraunt = async(id:String) =>{
+    try{
+      const accessToken = await getAccessTokenSilently({
+        authorizationParams:{
+          audience:import.meta.env.VITE_AUTH0_AUDIENCE
+        }
+      });
+      const res = await axios.delete(`/api/my/restraunt/${id}`,{
+          headers:{
+            Authorization:`Bearer ${accessToken}`
+          }
+      })
+
+      console.log(res);
+      navigate("/user-restraunts");
+    }
+    catch(err){
+      throw new Error(err as any);
+    }
+  }
+
+  const{
+    mutateAsync:deleteRestraunt,
+    isLoading,
+    isError,
+    isSuccess
+  } = useMutation(handleDeleteRestraunt);
+
+  return {deleteRestraunt,isLoading,isSuccess,isError}
 }

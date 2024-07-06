@@ -20,7 +20,6 @@ export const cuisineList = [
   "Salads",
   "Seafood",
   "Spanish",
-  "Steak",
   "Sushi",
   "Tacos",
   "Tapas",

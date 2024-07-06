@@ -6,6 +6,6 @@ restrauntRouter.get("/", restrauntController.getUserRestraunts);
 restrauntRouter.get("/:id", restrauntController.getRestraunt);
 restrauntRouter.post("/", restrauntController.addRestraunt);
 restrauntRouter.put("/", restrauntController.updateRestraunt);
-restrauntRouter.delete("/", restrauntController.deleteRestraunt);
+restrauntRouter.delete("/:id", restrauntController.deleteRestraunt);
 
 export default restrauntRouter;
