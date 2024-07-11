@@ -75,15 +75,15 @@
   }
 }
 
-@layer components{
-  .user-restraunt-card img{
-    height:30vh;
+@layer components {
+  .user-restraunt-card img {
+    height: 30vh;
     max-height: 30vh;
-    width:100%;
+    width: 100%;
   }
 
-  .form-image img{
-    max-height:30vh;
+  .form-image img {
+    max-height: 30vh;
     object-fit: contain;
     width: 100%;
   }
@@ -94,5 +94,14 @@
     padding-left: 1em;
     border-radius: 1em;
     color: white;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 }

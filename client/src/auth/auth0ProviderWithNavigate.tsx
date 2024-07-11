@@ -25,7 +25,6 @@ export function Auth0ProviderWithNavigate({ children }: Props) {
       clientId={clientId}
       authorizationParams={{
         redirect_uri: callbackUri,
-        //audience: `http://localhost:3000/api/my/user`
       }}
       onRedirectCallback={onRedirectCallback}
     >

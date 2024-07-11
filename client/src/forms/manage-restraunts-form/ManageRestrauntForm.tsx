@@ -56,14 +56,12 @@ interface Props {
   formData: restrauntFormData | null | undefined;
   onSave(data: restrauntFormData): void;
   isLoading: Boolean;
-  onDelete?(id: String | undefined): void;
 }
 
 const ManageRestrauntForm = ({
   formData,
   onSave,
-  isLoading,
-  onDelete,
+  isLoading, 
 }: Props) => {
   const {
     handleSubmit,

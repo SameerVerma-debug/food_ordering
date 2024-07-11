@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import connectDB from "./utils/connectDB";
 import userRouter from "./routes/user";
 import restrauntRouter from "./routes/restraunt";
+import searchRouter from "./routes/search";
 import checkJwt, { jwtParse } from "./middlewares/checkJwt";
 import {v2 as cloudinary} from "cloudinary";
 import "dotenv/config";
@@ -29,6 +30,7 @@ app.get("/health",(req:Request,res:Response) => {
 })
 
 app.use("/api/my/upload",uploadRouter);
+app.use("/api/my/search",searchRouter);
 
 app.use(checkJwt);
 app.use(jwtParse);

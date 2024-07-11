@@ -12,6 +12,7 @@ import { Toaster } from "react-hot-toast";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { Restraunt } from "./pages/user-restraunts/Restraunt";
 import { AddRestraunt } from "./pages/user-restraunts/AddRestraunt";
+import { RestrauntsSearch } from "./pages/RestrauntsSearch";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_DEFAULT_URL;
 
@@ -32,6 +33,7 @@ function App() {
                 <Route path="user-restraunts/new" element={<AddRestraunt/>}/>
               </Route>
               <Route path="auth-callback" element={<AuthCallback />} />
+              <Route path="search" element={<RestrauntsSearch/>}/>
             </Route>
           </Routes>
         </Auth0ProviderWithNavigate>
