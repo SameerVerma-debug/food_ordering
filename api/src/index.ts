@@ -10,6 +10,7 @@ import {v2 as cloudinary} from "cloudinary";
 import "dotenv/config";
 import uploadRouter from "./routes/upload";
 import bodyParser from "body-parser";
+import searchRestrauntRouter from "./routes/searchRestraunts";
 
 const app = express();
 connectDB();
@@ -31,6 +32,7 @@ app.get("/health",(req:Request,res:Response) => {
 
 app.use("/api/my/upload",uploadRouter);
 app.use("/api/my/search",searchRouter);
+app.use("/api/my/search/restraunt",searchRestrauntRouter);
 
 app.use(checkJwt);
 app.use(jwtParse);

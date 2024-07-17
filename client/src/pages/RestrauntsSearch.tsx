@@ -1,23 +1,13 @@
-import { queryParams, useGetRestraunts } from "@/api/MySearchApi";
-import { Button } from "@/components/ui/button";
-import { cuisineList } from "@/config/restraunt-cuisine-options";
+import { useGetRestraunts } from "@/api/MySearchApi";
 import { restrauntFormData } from "@/forms/manage-restraunts-form/ManageRestrauntForm";
-import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { FilterOption } from "@/components/CuisineFilter";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { AdvanceImage } from "@/components/AdvanceImage";
+import { SortRestraunts } from "@/components/SortRestraunts";
+import { CuisinesFilter } from "@/components/CuisinesFilter";
+import { Pagination } from "@/components/Paginations";
+import { RestrauntSearchBar } from "@/components/RestrauntSearchBar";
+import { SearchedRestraunts } from "@/components/SearchedRestraunts";
+import { Loading } from "@/components/Loading";
 
 export const SEARCH_RESTRAUNTS_LIMIT = 15;
 
@@ -30,125 +20,61 @@ export function RestrauntsSearch() {
   const [totalPages, setTotalPages] = useState<number>(1);
 
   const { getRestraunts, isLoading } = useGetRestraunts();
-  const isTotalPagesFetched = useRef<boolean>(false);
-  const [selectedCuisines, setSelectedCuisines] = useState<[string]>([""]);
+  const [selectedCuisines, setSelectedCuisines] = useState<[string | null]>([
+    null,
+  ]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [sort, setSort] = useState<string>("default");
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
     let ignore = false;
     const fetchData = async () => {
-      const city = searchParams.get("city");
-      const country = searchParams.get("country");
+      const city = searchParams.get("city") as string;
+      const country = searchParams.get("country") as string;
       const results = await getRestraunts({
         city,
         country,
         page,
-        limit: SEARCH_RESTRAUNTS_LIMIT,
-      } as queryParams);
+        name: searchTerm,
+        cuisines: selectedCuisines,
+        sort: sort,
+      });
       setRestraunts(results.restraunts);
-      if (!isTotalPagesFetched.current) {
-        setTotalPages(results.totalPages);
-        isTotalPagesFetched.current = true;
-      }
+      setTotalPages(results.totalPages);
     };
 
-    if (!ignore) {
+    if (!ignore && !modalOpen) {
       fetchData();
     }
 
     return () => {
       ignore = true;
     };
-  }, [searchParams, page]);
-
-  const handleSearchFilter = () => {};
+  }, [searchParams, page, sort, modalOpen, searchTerm]);
 
   return (
-    <div className="p-6 flex flex-1 flex-col">
-      <div className="flex justify-between">
-        <Dialog>
-          <DialogTrigger>
-            <div className="border p-2 rounded-lg bg-gray-100">
-              Filter By Cuisines
-            </div>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle className="text-center">Cuisines</DialogTitle>
-              <DialogDescription className="text-center">
-                <div>
-                  {cuisineList.map((cuisine) => {
-                    return (
-                      <FilterOption
-                        selected={selectedCuisines}
-                        setSelected={setSelectedCuisines}
-                        value={cuisine}
-                      />
-                    );
-                  })}
-                </div>
-              </DialogDescription>
-            </DialogHeader>
-            <DialogClose>
-              <Button onClick={handleSearchFilter}>Apply Filters</Button>
-            </DialogClose>
-          </DialogContent>
-        </Dialog>
-        <div>Sort</div>
-      </div>
-
-      <div className="mt-4 flex flex-col flex-1">
-        {restraunts && (
-          <div className="flex-1">
-            {restraunts.map((restraunt) => {
-              return (
-                <div className="w-full" key={restraunt._id}>
-                  <div className="flex w-full gap-4">
-                    <div className="w-[20vw] h-[20vh] object-cover">
-                    <AdvanceImage photo={restraunt.image} />
-                    </div>
-                    <div>
-                      <h1>{restraunt.name}</h1>
-                      <p>Cuisines</p>
-                    </div>
-                    <div>
-                      <p>{restraunt.estimatedDeliveryTime}</p>
-                      <p>Delivery From Rs.{restraunt.deliveryPrice}</p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        <div className="flex gap-2 items-center justify-center">
-          <Button
-            onClick={() => setPage(page - 1)}
-            disabled={page <= 1}
-            variant="ghost"
-          >
-            Previous
-          </Button>
-          {page > 1 && (
-            <Button onClick={() => setPage(page - 1)} variant="ghost">
-              {page - 1}
-            </Button>
-          )}
-          <Button variant="default">{page}</Button>
-          {page < totalPages && (
-            <Button onClick={() => setPage(page + 1)} variant="ghost">
-              {page + 1}
-            </Button>
-          )}
-          <p>...</p>
-          <Button
-            variant="ghost"
-            onClick={() => setPage(page + 1)}
-            disabled={page >= totalPages}
-          >
-            Next
-          </Button>
+    <div className="flex items-center justify-center">
+      <div className="p-6 flex flex-1 flex-col md:max-w-[90vw] lg:max-w-[80vw]">
+        <RestrauntSearchBar setValue={setSearchTerm} />
+        <div className="flex justify-center gap-2 md:justify-between w-full flex-wrap items-center">
+          <CuisinesFilter
+            modalOpen={modalOpen}
+            setModalOpen={setModalOpen}
+            selectedCuisines={selectedCuisines}
+            setSelectedCuisines={setSelectedCuisines}
+          />
+          <SortRestraunts setSort={setSort} />
         </div>
+
+        {isLoading ? (
+          <div className="flex justify-center items-center h-[70vh]">
+            <Loading />
+          </div>
+        ) : (
+          <SearchedRestraunts restraunts={restraunts} />
+        )}
+        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
       </div>
     </div>
   );

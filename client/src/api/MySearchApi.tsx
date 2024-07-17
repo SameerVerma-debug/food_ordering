@@ -6,6 +6,9 @@ export interface queryParams{
   city:String,
   country:String,
   page:Number,
+  name:string | undefined,
+  sort:string,
+  cuisines:[string | null],
 }
 
 export function useSearchAutocomplete() {
@@ -36,14 +39,17 @@ export function useSearchAutocomplete() {
 }
 
 export function useGetRestraunts() {
-  const handleGetRestraunts = async ({city, country, page}:queryParams) => {
+  const handleGetRestraunts = async ({city, country, page, name, sort, cuisines}:queryParams) => {
     try {
-      const res = await axios.get(`/api/my/search`, {
+      const res = await axios.get(`/api/my/search/restraunt`, {
         params: {
           city: city,
           country: country,
           page:page,
-          limit:SEARCH_RESTRAUNTS_LIMIT
+          limit:SEARCH_RESTRAUNTS_LIMIT,
+          name,
+          sort,
+          cuisines
         },
       });
       return res.data;

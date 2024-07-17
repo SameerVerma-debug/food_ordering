@@ -1,7 +1,7 @@
 import { Button } from "./ui/button";
 
 interface Props {
-  selected: [string];
+  selected: [string | null];
   setSelected: Function;
   value: string;
 }

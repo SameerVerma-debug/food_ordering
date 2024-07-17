@@ -10,14 +10,18 @@ const restrauntSchema = new Schema({
   name: {
     type: String,
     required: [true, "Name is required for Restraunt"],
+    trim:true,
+    lowercase:true
   },
   city: {
     type: String,
     required: [true, "City is required for restraunt"],
+    trim:true,
   },
   country: {
     type: String,
     required: [true, "Country is required for restraunt"],
+    trim:true,
   },
   deliveryPrice: {
     type: Number,
@@ -50,5 +54,7 @@ const restrauntSchema = new Schema({
     required: true,
   },
 });
+
+restrauntSchema.index({name:"text"})
 
 export default mongoose.model("Restraunt", restrauntSchema);
