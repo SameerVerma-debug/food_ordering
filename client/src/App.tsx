@@ -13,6 +13,8 @@ import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { Restraunt } from "./pages/user-restraunts/Restraunt";
 import { AddRestraunt } from "./pages/user-restraunts/AddRestraunt";
 import { RestrauntsSearch } from "./pages/RestrauntsSearch";
+import { DetailRestraunt } from "./pages/DetailRestraunt";
+import { CheckoutPage } from "./pages/Checkout";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_DEFAULT_URL;
 
@@ -34,6 +36,8 @@ function App() {
               </Route>
               <Route path="auth-callback" element={<AuthCallback />} />
               <Route path="search" element={<RestrauntsSearch/>}/>
+              <Route path="restraunt/:id" element={<DetailRestraunt/>}/>
+              <Route path="checkout/restraunt/:id" element={<CheckoutPage/>}/>
             </Route>
           </Routes>
         </Auth0ProviderWithNavigate>

@@ -34,6 +34,7 @@ const schema = yup.object().shape({
   menuItems: yup
     .array(
       yup.object({
+        _id:yup.string(),
         itemName: yup.string().required("Enter name for item"),
         itemPrice: yup
           .number()

@@ -4,6 +4,7 @@ import { IoMdTime } from "react-icons/io";
 import { FaMoneyBillAlt } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
 import { Link } from "react-router-dom";
+import { Separator } from "./ui/separator";
 
 interface Props {
   restraunts: [restrauntFormData] | null;
@@ -16,7 +17,7 @@ export function SearchedRestraunts({ restraunts }: Props) {
         <div className="flex-1 flex flex-col gap-10 w-full">
           {restraunts.map((restraunt) => {
             return (
-              <Link to={`/restraunt/${restraunt._id}`} className="flex w-full rounded-lg overflow-hidden justify-between md:h-[200px] bg-gray-100 hover:scale-[1.01] transition-all duration-200 cursor-pointer" key={restraunt._id}>
+              <Link to={`/restraunt/${restraunt._id}`} className="flex w-full bg-gray-50 rounded-lg overflow-hidden justify-between md:h-[200px] bg-black-100 hover:scale-[1.01] transition-all duration-200 cursor-pointer" key={restraunt._id}>
                 <div className="md:flex w-full gap-2 grid">
                   <div className="md:h-full h-[170px] md:max-w-[300px] w-full restraunt-image mb-2">
                     <AdvanceImage photo={restraunt.image} />
