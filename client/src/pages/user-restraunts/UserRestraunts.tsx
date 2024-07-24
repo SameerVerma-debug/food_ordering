@@ -1,4 +1,4 @@
-import { useGetUserRestraunts } from "@/api/MyRestrauntApi";
+import { useGetUserRestraunts } from "@/api/MyUserRestrauntApi";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";

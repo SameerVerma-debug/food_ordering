@@ -4,16 +4,16 @@ import toast from "react-hot-toast";
 import { useMutation } from "react-query";
 
 interface CreateUserRequest {
-  auth0Id: String;
-  email: String;
+  auth0Id: string;
+  email: string;
 }
 
 interface UpdateUserProfile {
-  email: String;
-  name: String;
-  address?: String;
-  city?: String;
-  country?: String;
+  email: string;
+  name: string;
+  address: string | null | undefined;
+  city: string | null | undefined;
+  country: string | null | undefined;
 }
 
 export function useCreateMyUser() {

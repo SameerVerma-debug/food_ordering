@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
-import { useDeleteRestraunt } from "@/api/MyRestrauntApi";
+import { useDeleteRestraunt } from "@/api/MyUserRestrauntApi";
 import { LoadingButton } from "./LoadingButton";
 
 interface Props {

@@ -1,9 +1,12 @@
 import { useGetRestraunt } from "@/api/MyRestrauntApi";
+import { CartContext } from "@/App";
 import { AdvanceImage } from "@/components/AdvanceImage";
+import { ChangeItemQuantity } from "@/components/ChangeItemQuantity";
 import { Loading } from "@/components/Loading";
+import { RemoveCartItem } from "@/components/RemoveCartItem";
 import { Button } from "@/components/ui/button";
 import { restrauntFormData } from "@/forms/manage-restraunts-form/ManageRestrauntForm";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaRupeeSign } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,10 +15,9 @@ export function DetailRestraunt() {
   const [restraunt, setRestraunt] = useState<restrauntFormData | null>(null);
   const { getRestraunt } = useGetRestraunt();
   const { id } = useParams();
-  const [itemsQuantity, setItemsQuantity] = useState<Map<string, number>>(
-    new Map()
-  );
   const navigate = useNavigate();
+  const { cartItems, setCartItems, selectedRestraunt, setSelectedRestraunt } =
+    useContext(CartContext);
 
   useEffect(() => {
     let ignore = false;
@@ -24,13 +26,6 @@ export function DetailRestraunt() {
       try {
         const res = await getRestraunt(id as string);
         setRestraunt(res);
-
-        //restore items added to cart by user
-        if (res?._id && itemsQuantity.size == 0 && localStorage.getItem(res._id)) {
-          setItemsQuantity(
-            new Map(JSON.parse(localStorage.getItem(res._id) as string))
-          );
-        }
       } catch (err) {
         throw new Error(err as any);
       }
@@ -45,31 +40,23 @@ export function DetailRestraunt() {
     };
   }, [id]);
 
-  const handleQuantityChange = (num: number, itemId: string) => {
-    let val = itemsQuantity.get(itemId);
-    if (!val || isNaN(val)) {
-      val = 1;
-    } else {
-      val += num;
+  const handleCheckout = async () => {
+    navigate(`/checkout`);
+  };
+
+  const handleAddItem = (itemId: string, name: string, price: number) => {
+    if (selectedRestraunt !== id) {
+      localStorage.setItem("selectedRestraunt", JSON.stringify(id));
+      setSelectedRestraunt(id);
+      localStorage.removeItem("cartItems");
+      cartItems.clear();
     }
-
-    if (val > 0) itemsQuantity.set(itemId, val);
-    else itemsQuantity.delete(itemId);
-    setItemsQuantity(new Map(itemsQuantity));
-  };
-
-  const handleCheckout = () => {
+    cartItems?.set(itemId, { name, price, quantity: 1 });
     localStorage.setItem(
-      restraunt?._id as string,
-      JSON.stringify(Array.from(itemsQuantity.entries()))
+      "cartItems",
+      JSON.stringify(Array.from(cartItems.entries()))
     );
-
-    navigate(`/checkout/restraunt/${id}`);
-  };
-
-  const handleRemoveItem = (itemId: string) => {
-    itemsQuantity.delete(itemId);
-    setItemsQuantity(new Map(itemsQuantity));
+    setCartItems(new Map(cartItems));
   };
 
   return (
@@ -94,7 +81,7 @@ export function DetailRestraunt() {
                 <div className="flex flex-wrap">
                   {restraunt?.cuisines.map((cuisine) => {
                     return (
-                      <div className="flex items-center gap-1">
+                      <div key={cuisine} className="flex items-center gap-1">
                         <GoDotFill size={12} />
                         <p className="mb-1 mr-2">{cuisine}</p>
                       </div>
@@ -109,6 +96,7 @@ export function DetailRestraunt() {
               {restraunt?.menuItems.map((menuItem) => {
                 return (
                   <div
+                    key={menuItem._id}
                     className="flex justify-between gap-2 text-md
                   w-full h-fit hover:border-orange-400 border 
                   transition-all duration-300 cursor-pointer rounded-xl overflow-hidden"
@@ -128,43 +116,23 @@ export function DetailRestraunt() {
                           {menuItem.itemPrice}
                         </p>
                       </div>
-                      {itemsQuantity.has(menuItem._id as string) ? (
-                        <div className="">
-                          <div className={`flex gap-3 items-center`}>
-                            <Button
-                              variant="ghost"
-                              className="rounded-2xl text-2xl"
-                              onClick={() =>
-                                handleQuantityChange(-1, menuItem._id as string)
-                              }
-                            >
-                              <p>-</p>
-                            </Button>
-                            <p>{itemsQuantity.get(menuItem._id as string)}</p>
-                            <Button
-                              variant="ghost"
-                              className="rounded-2xl text-2xl"
-                              onClick={() =>
-                                handleQuantityChange(1, menuItem._id as string)
-                              }
-                            >
-                              <p>+</p>
-                            </Button>
-                          </div>
-                          <Button
-                            onClick={() =>
-                              handleRemoveItem(menuItem._id as string)
-                            }
-                            className="ml-4 mt-2"
-                            variant="destructive"
-                          >
-                            Remove
-                          </Button>
+                      {cartItems?.has(menuItem._id as string) ? (
+                        <div className="flex">
+                          <ChangeItemQuantity
+                            itemId={menuItem._id as string}
+                            itemName={menuItem.itemName}
+                            itemPrice={menuItem.itemPrice}
+                          />
+                          <RemoveCartItem itemId={menuItem._id as string} />
                         </div>
                       ) : (
                         <Button
                           onClick={() =>
-                            handleQuantityChange(1, menuItem._id as string)
+                            handleAddItem(
+                              menuItem._id as string,
+                              menuItem.itemName,
+                              menuItem.itemPrice
+                            )
                           }
                           className={`w-fit`}
                         >
@@ -176,13 +144,13 @@ export function DetailRestraunt() {
                 );
               })}
             </div>
-            {itemsQuantity.size > 0 && (
+            {cartItems && cartItems?.size > 0 && (
               <Button
                 onClick={handleCheckout}
                 className="mt-6 w-full bg-red-500 sticky bottom-2 h-[8vh] text-lg"
               >
                 <span className="font-bold mr-2 bg-orange-500 rounded-2xl p-1 px-3">
-                  {itemsQuantity.size}
+                  {cartItems.size}
                 </span>
                 Added | Checkout
               </Button>

@@ -1,4 +1,4 @@
-import { useAddRestraunt } from "@/api/MyRestrauntApi";
+import { useAddRestraunt } from "@/api/MyUserRestrauntApi";
 import ManageRestrauntForm from "@/forms/manage-restraunts-form/ManageRestrauntForm";
 
 export function AddRestraunt() {

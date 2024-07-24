@@ -7,6 +7,7 @@ export function AuthCallback () {
   const navigate = useNavigate();
   const {user} = useAuth0();
   const {createUser} = useCreateMyUser();
+  
 
   const hasCreatedUser = useRef(false);
   useEffect(() => { 
@@ -16,7 +17,7 @@ export function AuthCallback () {
           createUser({ auth0Id: user.sub, email: user.email });
         }
         hasCreatedUser.current = true;
-       navigate("/");
+        navigate("/");
       }
       catch(err:any){
         throw new Error(err);

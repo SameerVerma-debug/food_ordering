@@ -1,4 +1,4 @@
-import { useGetRestraunt, useUpdateRestraunt } from "@/api/MyRestrauntApi";
+import { useGetRestraunt, useUpdateRestraunt } from "@/api/MyUserRestrauntApi";
 import ManageRestrauntForm, {
   restrauntFormData,
 } from "@/forms/manage-restraunts-form/ManageRestrauntForm";

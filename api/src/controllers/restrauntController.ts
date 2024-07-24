@@ -25,51 +25,89 @@ const getUserRestraunts = async (req: Request, res: Response) => {
 };
 
 const getRestraunt = async (req: Request, res: Response) => {
-  const {id} = req.params;
-  const userId = req.userId;
+  const { id } = req.params;
 
-  if(!id){
-    return res.sendStatus(400);
+  if (!id) {
+    return res.json({ message: "Id not provided" }).status(400);
   }
-
-  try{
+  try {
     const foundRestraunt = await Restraunt.findById(id);
 
-    if(!foundRestraunt){
+    if (!foundRestraunt) {
       return res.sendStatus(404);
     }
 
-    if(foundRestraunt.owner.toString() != userId){
+    return res.json(foundRestraunt);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+};
+
+const getUserRestraunt = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const userId = req.userId;
+
+  if (!id) {
+    return res.sendStatus(400);
+  }
+
+  try {
+    const foundRestraunt = await Restraunt.findById(id);
+
+    if (!foundRestraunt) {
+      return res.sendStatus(404);
+    }
+
+    if (foundRestraunt.owner.toString() != userId) {
       return res.sendStatus(403);
     }
 
     return res.json(foundRestraunt);
-    }
-    catch(err){
-      console.log(err);
-      res.sendStatus(500)
-    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
 };
 
 const updateRestraunt = async (req: Request, res: Response) => {
-  const {_id,name,city,country,deliveryPrice,estimatedDeliveryTime,cuisines,menuItems,image} = req.body;
+  const {
+    _id,
+    name,
+    city,
+    country,
+    deliveryPrice,
+    estimatedDeliveryTime,
+    cuisines,
+    menuItems,
+    image,
+  } = req.body;
   const userId = req.userId;
-  if(!_id || !name || !city || !country || !deliveryPrice 
-    || !estimatedDeliveryTime || cuisines?.length <= 0 || menuItems?.length <= 0 || !image){
+  if (
+    !_id ||
+    !name ||
+    !city ||
+    !country ||
+    !deliveryPrice ||
+    !estimatedDeliveryTime ||
+    cuisines?.length <= 0 ||
+    menuItems?.length <= 0 ||
+    !image
+  ) {
     return res.sendStatus(400);
   }
 
-  try{
+  try {
     const foundRestraunt = await Restraunt.findById(_id);
 
-    if(!foundRestraunt){
+    if (!foundRestraunt) {
       return res.sendStatus(404);
     }
-  
-    if(foundRestraunt.owner.toString() != userId){
+
+    if (foundRestraunt.owner.toString() != userId) {
       return res.sendStatus(403);
     }
-    
+
     foundRestraunt.name = name;
     foundRestraunt.city = city;
     foundRestraunt.country = country;
@@ -79,25 +117,45 @@ const updateRestraunt = async (req: Request, res: Response) => {
     foundRestraunt.menuItems = menuItems;
     foundRestraunt.image = image;
     foundRestraunt.lastUpdated = new Date();
-  
+
     await foundRestraunt.save();
-    return res.json({message:"Restraunt Updated",restraunt:foundRestraunt});
-  }
-  catch(err){
+    return res.json({
+      message: "Restraunt Updated",
+      restraunt: foundRestraunt,
+    });
+  } catch (err) {
     console.log(err);
     return res.sendStatus(500);
   }
 };
 
 const addRestraunt = async (req: Request, res: Response) => {
-  const {name,city,country,deliveryPrice,estimatedDeliveryTime,cuisines,menuItems,image} = req.body;
+  const {
+    name,
+    city,
+    country,
+    deliveryPrice,
+    estimatedDeliveryTime,
+    cuisines,
+    menuItems,
+    image,
+  } = req.body;
   const owner = req.userId;
-  if(!owner || !name || !city || !country || !deliveryPrice 
-    || !estimatedDeliveryTime || cuisines?.length <= 0 || menuItems?.length <= 0 || !image){
+  if (
+    !owner ||
+    !name ||
+    !city ||
+    !country ||
+    !deliveryPrice ||
+    !estimatedDeliveryTime ||
+    cuisines?.length <= 0 ||
+    menuItems?.length <= 0 ||
+    !image
+  ) {
     return res.sendStatus(400);
   }
 
-  try{  
+  try {
     const restraunt = await Restraunt.create({
       owner,
       name,
@@ -108,34 +166,32 @@ const addRestraunt = async (req: Request, res: Response) => {
       cuisines,
       menuItems,
       image,
-      lastUpdated:new Date()
+      lastUpdated: new Date(),
     });
 
     return res.json(restraunt);
-  }
-  catch(err){
+  } catch (err) {
     console.log(err);
     res.sendStatus(500);
   }
 };
 
 const deleteRestraunt = async (req: Request, res: Response) => {
-  const {id} = req.params;
+  const { id } = req.params;
   const userId = req.userId;
 
-  if(!id){
+  if (!id) {
     return res.sendStatus(400);
   }
 
-  try{
+  try {
     const restraunt = await Restraunt.findById(id);
-    if(restraunt?.owner.toString() != userId){
+    if (restraunt?.owner.toString() != userId) {
       return res.sendStatus(403);
     }
     const result = await Restraunt.findByIdAndDelete(id);
     res.json(result);
-  }
-  catch(err){
+  } catch (err) {
     console.log(err);
     res.sendStatus(500);
   }
@@ -144,6 +200,7 @@ const deleteRestraunt = async (req: Request, res: Response) => {
 const restrauntController = {
   getUserRestraunts,
   getRestraunt,
+  getUserRestraunt,
   addRestraunt,
   updateRestraunt,
   deleteRestraunt,

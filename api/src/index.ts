@@ -3,7 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import connectDB from "./utils/connectDB";
 import userRouter from "./routes/user";
-import restrauntRouter from "./routes/restraunt";
+import userRestrauntRouter from "./routes/user-restraunt";
 import searchRouter from "./routes/search";
 import checkJwt, { jwtParse } from "./middlewares/checkJwt";
 import {v2 as cloudinary} from "cloudinary";
@@ -11,6 +11,7 @@ import "dotenv/config";
 import uploadRouter from "./routes/upload";
 import bodyParser from "body-parser";
 import searchRestrauntRouter from "./routes/searchRestraunts";
+import restrauntRouter from "./routes/restraunt";
 
 const app = express();
 connectDB();
@@ -33,11 +34,12 @@ app.get("/health",(req:Request,res:Response) => {
 app.use("/api/my/upload",uploadRouter);
 app.use("/api/my/search",searchRouter);
 app.use("/api/my/search/restraunt",searchRestrauntRouter);
+app.use("/api/my/restraunt",restrauntRouter);
 
 app.use(checkJwt);
 app.use(jwtParse);
 app.use("/api/my/user", userRouter);
-app.use("/api/my/restraunt", restrauntRouter);
+app.use("/api/my/user-restraunt", userRestrauntRouter);
 
 mongoose.connection.once("open", () => {
   console.log("DB CONNECTED");
