@@ -4,18 +4,18 @@ import { UserDetailForm } from "@/forms/user-detail/UserDetail";
 import { useAuth0 } from "@auth0/auth0-react";
 import { ChangeItemQuantity } from "@/components/ChangeItemQuantity";
 import { UserFormData } from "./UserProfile";
-import { useUpdateUser } from "@/api/MyUserApi";
 import toast from "react-hot-toast";
 import { CartContext } from "@/App";
 import { RemoveCartItem } from "@/components/RemoveCartItem";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useCheckout } from "@/api/MyCheckoutApi";
 
 export function CheckoutPage() {
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
-  const { updateUser } = useUpdateUser();
-  const { cartItems} =
-    useContext(CartContext);
+  const { isAuthenticated, loginWithRedirect } =
+    useAuth0();
+  const {checkout,isLoading} = useCheckout();
+  const { cartItems } = useContext(CartContext);
   const navigate = useNavigate();
 
   const handleCheckout = async (data: UserFormData) => {
@@ -23,14 +23,15 @@ export function CheckoutPage() {
       toast.error("No items in cart");
       return;
     }
-    await updateUser(data);
+
+    await checkout(data);
   };
 
   const handleAddMoreItems = () => {
     navigate(-1);
   };
 
-  if(!isAuthenticated){
+  if (!isAuthenticated) {
     loginWithRedirect();
     return;
   }
@@ -82,7 +83,7 @@ export function CheckoutPage() {
         <p className="text-2xl mb-4 font-bold">Verify Details</p>
         <UserDetailForm
           onSubmit={handleCheckout}
-          isLoading={false}
+          isLoading={isLoading}
           submitButtonText="Checkout"
         />
       </div>

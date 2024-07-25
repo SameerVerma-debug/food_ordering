@@ -16,6 +16,8 @@ import { RestrauntsSearch } from "./pages/RestrauntsSearch";
 import { DetailRestraunt } from "./pages/DetailRestraunt";
 import { CheckoutPage } from "./pages/Checkout";
 import { createContext, useEffect, useState } from "react";
+import { OrderSuccess } from "./pages/OrderSuccess";
+import { OrderCancel } from "./pages/OrderCancel";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_DEFAULT_URL;
 
@@ -92,6 +94,8 @@ function App() {
                 <Route path="search" element={<RestrauntsSearch />} />
                 <Route path="restraunt/:id" element={<DetailRestraunt />} />
                 <Route path="checkout" element={<CheckoutPage />} />
+                <Route path="success" element={<OrderSuccess/>}/>
+                <Route path="cancel" element={<OrderCancel/>}/>
               </Route>
             </Routes>
           </Auth0ProviderWithNavigate>

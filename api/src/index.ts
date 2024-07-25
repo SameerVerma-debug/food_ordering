@@ -12,6 +12,7 @@ import uploadRouter from "./routes/upload";
 import bodyParser from "body-parser";
 import searchRestrauntRouter from "./routes/searchRestraunts";
 import restrauntRouter from "./routes/restraunt";
+import checkoutRouter from "./routes/checkout";
 
 const app = express();
 connectDB();
@@ -40,6 +41,7 @@ app.use(checkJwt);
 app.use(jwtParse);
 app.use("/api/my/user", userRouter);
 app.use("/api/my/user-restraunt", userRestrauntRouter);
+app.use("/api/my/create-checkout-session",checkoutRouter);
 
 mongoose.connection.once("open", () => {
   console.log("DB CONNECTED");

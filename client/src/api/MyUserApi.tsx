@@ -1,6 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
-import toast from "react-hot-toast";
 import { useMutation } from "react-query";
 
 interface CreateUserRequest {
@@ -92,13 +91,7 @@ export function useUpdateUser() {
     isLoading,
   } = useMutation(updateUserRequest);
 
-  if(isSuccess){
-    toast.success("Profile Updated");
-  }
-
-  if(isError){
-    toast.error("Profile cannot be updated");
-  }
+  
 
   return {
     updateUser,

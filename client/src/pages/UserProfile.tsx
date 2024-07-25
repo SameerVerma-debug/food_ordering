@@ -1,5 +1,6 @@
 import { useUpdateUser } from "@/api/MyUserApi";
 import { UserDetailForm } from "@/forms/user-detail/UserDetail";
+import toast from "react-hot-toast";
 
 export interface UserFormData {
   email: string;
@@ -10,10 +11,17 @@ export interface UserFormData {
 }
 
 export function UserProfile() {
-  const { updateUser, isLoading } = useUpdateUser();
+  const { updateUser, isLoading, isSuccess, isError } = useUpdateUser();
 
   const onSubmit = async (data: UserFormData) => {
     await updateUser(data);
+    if (isSuccess) {
+      toast.success("Profile Updated");
+    }
+
+    if (isError) {
+      toast.error("Profile cannot be updated");
+    }
   };
 
   return (
