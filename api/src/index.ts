@@ -13,6 +13,14 @@ import bodyParser from "body-parser";
 import searchRestrauntRouter from "./routes/searchRestraunts";
 import restrauntRouter from "./routes/restraunt";
 import checkoutRouter from "./routes/checkout";
+import { rateLimit } from 'express-rate-limit'
+
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+	limit: 100,
+	standardHeaders: 'draft-7',
+	legacyHeaders: false,
+})
 
 const app = express();
 connectDB();
@@ -27,6 +35,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({extended:true}));
 //app.use(express.static(''));
 app.use(cors());
+app.use(limiter)
 
 app.get("/health",(req:Request,res:Response) => {
   res.json({message:"Health Ok"});

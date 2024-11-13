@@ -40,13 +40,10 @@ export function useCheckout() {
 
       const session = res.data;
 
-      console.log(session);
-
       const result = await stripe?.redirectToCheckout({
         sessionId: session.id,
       });
-      
-      console.log(result);
+    
       if (result?.error) {
         throw new Error(result.error as any);
       }

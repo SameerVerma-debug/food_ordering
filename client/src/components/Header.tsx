@@ -13,7 +13,7 @@ export function Header() {
           className="text-3xl font-bold tracking-tight text-orange-500"
           to="/"
         >
-          Sameer Eats
+          Campus Bites
         </Link>
         <div className="hidden md:flex gap-4">
           {isAuthenticated ? <NavLinks /> : <LoginButton />}
